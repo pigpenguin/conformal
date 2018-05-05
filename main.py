@@ -1,21 +1,25 @@
 from PIL import Image, ImageSequence
 from tiled import apply_map
-from conformal import spiral
+import cmath
+from conformal import mobius_inverse, spiral
 """
 Boring file loading stuff used to calle the
 stuff from tiled and conformal
 """
 
-input_file = "source.jpg"
+input_file = "images/source.jpg"
 output_file = "output.png"
 # Not gifs
-output_size = (512,512)
+output_size = (4196,4196)
 # Gifs
 #output_size = (256,256)
 
 input_image = Image.open(input_file)
 
+#Horribly broken
 conformal_map = lambda z : spiral(input_image.height,input_image.width,z)
+#conformal_map = cmath.log
+#conformal_map = mobius_inverse(0,1,1,0)
 #conformal_map = mobius_inverse(1,-1j,1,1j)
 
 if input_image.format == "GIF":
@@ -42,6 +46,6 @@ if input_image.format == "GIF":
                    loop=0,
                    duration=33)
 else:
-    apply_map(input_image,output_size,conformal_map).save(output_file)
+    apply_map(input_image,output_size,conformal_map,scale=50).resize((1024,1024)).save(output_file)
 
 print("done")

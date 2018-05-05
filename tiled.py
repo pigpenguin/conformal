@@ -21,22 +21,31 @@ class Tiled:
     source image provided, also important to note
     images are adressed "upside down". Upper left
     is (0,0), bottom right is (width,height).
-
-    Potential improvement:
-    Give the image an intrinsic scaling, ie make
-    it know how many units wide it is in the complex
-    plane as apposed to simply pixels. This would 
-    allow you to input a 256x256 image and specify
-    it is the unit square. Then the api would manage
-    that for you, i.e. asking for the point 1+i would
-    give you (256,256). I currently just assume the
-    image is 1 unit in it's shortest dimension and
-    is centered at 0.
     """
-    def __init__(self, im):
+    def __init__(self, im,scale=None,translate=None):
+        """
+        Create a tileable image
+
+        Parameters
+        ----------
+        im: image
+            the base image which will be tiled
+        scale: float
+            how much of the complex plane does the image fill
+        translate: complex
+            where is the center of the image located
+        """
         self.__source = im
-        self.height = im.height
-        self.width = im.width
+        self.__translate = -0.5 * complex(im.width,im.height)
+
+        if scale:
+            self.__scale = scale
+        else:
+            self.__scale = min(im.width,im.height)
+
+        if translate:
+            self.__translate += translate
+         
 
     def __get_x(self, x):
         """
@@ -112,6 +121,8 @@ class Tiled:
         -------
         pixel
         """
+        z = z*self.__scale
+        z += self.__translate
         x, y = z.real, z.imag
         x1, y1 = int(floor(x)), int(floor(y))
         x2, y2 = x1+1, y1+1
@@ -145,7 +156,7 @@ def lerp(lower, upper, coord):
     return int(round(lower * (1.0-ratio) + upper * ratio))
 
 
-def apply_map(source, size, function):
+def apply_map(source, size, function,scale=None,translate=None):
     """
     Applys the inverse map of a provided function to
     an image. 
@@ -169,17 +180,22 @@ def apply_map(source, size, function):
     Image
     """
     source = source.convert("RGB")
-    tiled = Tiled(source)
+    tiled = Tiled(source,scale = 2)
     output = Image.new("RGB",size)
+    
+    if not scale:
+        scale = min(output.width,output.height)
 
-    scale = float(min(source.height,source.width))
-    translate = complex(-size[0]/2., -size[1]/2.)
+    if not translate:
+        translate = -0.5 * complex(output.width,output.height)
+    else:
+        translate += -0.5 * complex(output.width,output.height)
 
     for x in range(0,output.width):
         for y in range(0,output.height):
-            image = complex(x,y) + translate
             try:
-                preimage = scale*function(image/scale)
+                image = (complex(x,y)+translate)/scale
+                preimage = function(image)
                 pixel = tiled.bilinear(preimage)
             except (ZeroDivisionError, ValueError):
                 # This happens occasionally, there are probably better
