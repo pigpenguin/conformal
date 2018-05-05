@@ -3,6 +3,11 @@ A naive first attempt at conformaly mapping images. Given an
 image and an *inverse* map it will produce the image under the
 map. It works on animated gifs too.
 
+## How it works
+Given an inverse map it scans over an empty image and for each pixel
+it finds the preimage poit and just copies over the value. This is
+why you need to supply an inverse map.
+
 ## Examples
 Just some examples of what it does to various images. (It likes
 tileable images a lot better).
@@ -13,9 +18,13 @@ It can map this ![static-preimage](/images/source.jpg)
 To this ![static-image](/images/output.jpg)
 
 ### Animated
-It also does gifs! Mapping ![anim-preimage](/images/source.gif)
+It also does gifs! Mapping 
 
-To this ![anim-image](/images/output.gif)
+![anim-preimage](/images/source.gif)
+
+To this 
+
+![anim-image](/images/output.gif)
 
 ## Setting up
 This program is based on python 3 and uses 
