@@ -49,5 +49,5 @@ allows for some palette stuff, I just haven't done it yet.
 of the spiral function in conformal.py it definitely is. Just haven't sorted it out
 yet. Currently it makes spirals like this:
 
-![failed branch cut](/images/brancfail.jpg)
+![failed branch cut](/images/branchfail.jpg)
 
