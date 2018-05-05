@@ -39,10 +39,15 @@ if you have no idea what I'm talking about.
 
 
 ## Current issues
-Well theres a lot, kind of just threw this together. The biggest two
-are it's super slow and it really doesn't like branch cuts. Doing this
-![branch cut fail](/images/branchfail.jpg) 
-Not sure how much can be done in general about the branch cut issue, 
-but in some cases it should be fixable enough. There are other issue
-but they're pointed out in the code when they happen.
+Well theres a lot, kind of just threw this together but:
+* It's slow. I'm doing the conformal map once per pixel, not sure if I missed some
+pillow primitive which might speed it up.
+* It's inffecient with file size. The bilinear interpolation doesn't like palettes. 
+if you give it a gif it will conver it to RGB. This takes up imense file size, pillow
+allows for some palette stuff, I just haven't done it yet.
+* Branch cuts are sad. In general I think this isn't fixable, but in the case
+of the spiral function in conformal.py it definitely is. Just haven't sorted it out
+yet. Currently it makes spirals like this:
+
+![failed branch cut](/images/brancfail.jpg)
 
